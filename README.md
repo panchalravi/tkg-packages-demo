@@ -18,6 +18,17 @@ kubectl create secret tls my-ca-secret --key unprotected-localRootCA.key --cert 
 #Install cert-manager package
 tanzu package install cert-manager --package-name cert-manager.tanzu.vmware.com --version 1.1.0+vmware.1-tkg.2 --namespace my-packages --create-namespace
 ```
+Configure cert-manager to issue TLS certificates using self-signed CA as configured in above TLS secret
+```yaml
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: ca-issuer
+  namespace: cert-manager
+spec:
+  ca:
+    secretName: my-ca-secret
+```
 
 # Contour
 - Prepare "contour-package-config.yaml" with following data. This configures Contour service to be exposed as LoadBalancer type and also to use cert-manafer to auto-generate TLS certificates for ingress resources based on domain names.
